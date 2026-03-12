@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Séance du dimanche - BoisguiBad{% endblock %}
+
+{% block body %}
+<div class="px-4 max-w-2xl">
+    <h1 class="text-2xl font-bold text-gray-900 mb-4">Proposer une séance du dimanche</h1>
+    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+        <p class="text-yellow-800 text-sm">
+            Les séances du dimanche sont proposées par les membres et fonctionnent comme un sondage de présence.
+            Contactez les membres via WhatsApp ou utilisez ce formulaire.
+        </p>
+    </div>
+    <a href="{{ path('session_list') }}" class="text-blue-600 hover:underline text-sm">← Retour aux séances</a>
+</div>
+{% endblock %}

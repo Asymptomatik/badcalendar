@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Membres - Admin BoisguiBad{% endblock %}
+
+{% block body %}
+<div class="px-4">
+    <h1 class="text-2xl font-bold text-gray-900 mb-6">Gestion des membres</h1>
+
+    <div class="bg-white shadow rounded-lg overflow-hidden">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nom</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Vérifié</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+            {% for user in users %}
+                <tr>
+                    <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ user.fullName }}</td>
+                    <td class="px-6 py-4 text-sm text-gray-500">{{ user.email }}</td>
+                    <td class="px-6 py-4 text-sm">
+                        {% if user.memberType %}
+                            <span class="px-2 py-1 rounded-full text-xs {% if user.memberType.value == 'LOISIR' %}bg-blue-100 text-blue-700{% else %}bg-purple-100 text-purple-700{% endif %}">
+                                {{ user.memberType.label() }}
+                            </span>
+                        {% else %}
+                            <span class="text-red-500 text-xs">Non assigné</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4 text-sm">
+                        {% if user.isVerified %}<span class="text-green-600">✓</span>{% else %}<span class="text-red-500">✗</span>{% endif %}
+                    </td>
+                    <td class="px-6 py-4 text-sm">
+                        <a href="{{ path('admin_member_show', {id: user.id}) }}" class="text-blue-600 hover:underline">Détails</a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

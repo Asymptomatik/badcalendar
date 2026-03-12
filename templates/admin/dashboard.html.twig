@@ -1,0 +1,117 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tableau de bord Admin - BoisguiBad{% endblock %}
+
+{% block body %}
+<div class="px-4">
+    <h1 class="text-2xl font-bold text-gray-900 mb-6">Tableau de bord Administrateur</h1>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        <!-- Séances sans responsable -->
+        <div class="bg-white shadow rounded-lg p-6">
+            <h2 class="text-lg font-semibold text-gray-800 mb-4">
+                🔑 Séances sans responsable clés
+                {% if sessionsWithoutResponsable|length > 0 %}
+                    <span class="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full ml-2">{{ sessionsWithoutResponsable|length }}</span>
+                {% endif %}
+            </h2>
+            {% if sessionsWithoutResponsable is empty %}
+                <p class="text-green-600 text-sm">✓ Toutes les séances ont un responsable.</p>
+            {% else %}
+                <ul class="space-y-2">
+                {% for session in sessionsWithoutResponsable %}
+                    <li class="flex items-center justify-between text-sm">
+                        <span>{{ session.type.label() }} — {{ session.date|date('d/m/Y') }}</span>
+                        <a href="{{ path('admin_session_edit', {id: session.id}) }}" class="text-blue-600 hover:underline text-xs">Assigner</a>
+                    </li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+
+        <!-- Validations en attente -->
+        <div class="bg-white shadow rounded-lg p-6">
+            <h2 class="text-lg font-semibold text-gray-800 mb-4">
+                ⏳ Validations en attente
+                {% if pendingValidations|length > 0 %}
+                    <span class="bg-yellow-500 text-white text-xs px-2 py-0.5 rounded-full ml-2">{{ pendingValidations|length }}</span>
+                {% endif %}
+            </h2>
+            {% if pendingValidations is empty %}
+                <p class="text-green-600 text-sm">✓ Aucune validation en attente.</p>
+            {% else %}
+                <ul class="space-y-2">
+                {% for reg in pendingValidations %}
+                    <li class="flex items-center justify-between text-sm">
+                        <span>{{ reg.user.fullName }} — {{ reg.event.title }}</span>
+                        <form method="post" action="{{ path('admin_event_registration_validate', {id: reg.id}) }}" class="inline">
+                            <input type="hidden" name="_token" value="{{ csrf_token('registration_validate_' ~ reg.id) }}">
+                            <button class="text-green-600 hover:underline text-xs">Valider</button>
+                        </form>
+                    </li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+
+        <!-- Membres sans type -->
+        <div class="bg-white shadow rounded-lg p-6">
+            <h2 class="text-lg font-semibold text-gray-800 mb-4">
+                👥 Membres sans type assigné
+                {% if membersWithoutType|length > 0 %}
+                    <span class="bg-orange-500 text-white text-xs px-2 py-0.5 rounded-full ml-2">{{ membersWithoutType|length }}</span>
+                {% endif %}
+            </h2>
+            {% if membersWithoutType is empty %}
+                <p class="text-green-600 text-sm">✓ Tous les membres ont un type.</p>
+            {% else %}
+                <ul class="space-y-2">
+                {% for user in membersWithoutType %}
+                    <li class="flex items-center justify-between text-sm">
+                        <span>{{ user.fullName }}</span>
+                        <a href="{{ path('admin_member_show', {id: user.id}) }}" class="text-blue-600 hover:underline text-xs">Assigner</a>
+                    </li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+
+        <!-- Objets trouvés non rendus -->
+        <div class="bg-white shadow rounded-lg p-6">
+            <h2 class="text-lg font-semibold text-gray-800 mb-4">
+                🎒 Objets trouvés non rendus
+                {% if unreturnedLostItems|length > 0 %}
+                    <span class="bg-blue-500 text-white text-xs px-2 py-0.5 rounded-full ml-2">{{ unreturnedLostItems|length }}</span>
+                {% endif %}
+            </h2>
+            {% if unreturnedLostItems is empty %}
+                <p class="text-green-600 text-sm">✓ Aucun objet en attente.</p>
+            {% else %}
+                <ul class="space-y-2">
+                {% for item in unreturnedLostItems %}
+                    <li class="text-sm">{{ item.description|slice(0, 40) }}</li>
+                {% endfor %}
+                </ul>
+                <a href="{{ path('lost_item_list') }}" class="mt-3 block text-blue-600 text-sm hover:underline">Gérer les objets →</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Liens rapides admin -->
+    <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+        <a href="{{ path('admin_member_list') }}" class="bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg p-4 text-center">
+            <div class="text-2xl mb-2">👥</div>
+            <div class="text-sm font-medium text-blue-800">Gérer les membres</div>
+        </a>
+        <a href="{{ path('admin_session_list') }}" class="bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg p-4 text-center">
+            <div class="text-2xl mb-2">🏸</div>
+            <div class="text-sm font-medium text-blue-800">Gérer les séances</div>
+        </a>
+        <a href="{{ path('admin_event_list') }}" class="bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg p-4 text-center">
+            <div class="text-2xl mb-2">🏆</div>
+            <div class="text-sm font-medium text-blue-800">Gérer les événements</div>
+        </a>
+    </div>
+</div>
+{% endblock %}

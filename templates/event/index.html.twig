@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Événements - BoisguiBad{% endblock %}
+
+{% block body %}
+<div class="px-4">
+    <h1 class="text-2xl font-bold text-gray-900 mb-6">Événements & Tournois</h1>
+
+    {% if upcomingEvents is empty %}
+        <div class="bg-white shadow rounded-lg p-8 text-center text-gray-500">
+            Aucun événement à venir pour le moment.
+        </div>
+    {% else %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for event in upcomingEvents %}
+            <div class="bg-white shadow rounded-lg p-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-2">{{ event.title }}</h2>
+                <p class="text-sm text-gray-500 mb-3">📅 {{ event.date|date('d/m/Y à H:i') }}</p>
+                {% if event.location %}
+                    <p class="text-sm text-gray-500 mb-3">📍 {{ event.location }}</p>
+                {% endif %}
+                {% if event.maxParticipants %}
+                    <p class="text-sm text-gray-500 mb-3">👥 {{ event.maxParticipants }} places</p>
+                {% endif %}
+                <a href="{{ path('event_show', {id: event.id}) }}" class="text-blue-600 hover:underline text-sm">Voir le détail →</a>
+            </div>
+        {% endfor %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

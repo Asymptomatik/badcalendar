@@ -1,0 +1,72 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Séance {{ session.type.label() }} - BoisguiBad{% endblock %}
+
+{% block body %}
+<div class="px-4 max-w-3xl">
+    <div class="mb-4">
+        <a href="{{ path('session_list') }}" class="text-blue-600 hover:underline text-sm">← Retour aux séances</a>
+    </div>
+
+    <div class="bg-white shadow rounded-lg p-6 mb-6">
+        <h1 class="text-2xl font-bold text-gray-900 mb-4">
+            Séance {{ session.type.label() }}
+            <span class="text-base font-normal text-gray-500">{{ session.date|date('d/m/Y à H:i') }}</span>
+        </h1>
+
+        <dl class="grid grid-cols-2 gap-4 text-sm">
+            <div>
+                <dt class="font-medium text-gray-500">Lieu</dt>
+                <dd>{{ session.location ?? 'Non défini' }}</dd>
+            </div>
+            <div>
+                <dt class="font-medium text-gray-500">Responsable clés</dt>
+                <dd>{% if session.responsableKeys %}{{ session.responsableKeys.fullName }}{% else %}<span class="text-red-500">Non assigné</span>{% endif %}</dd>
+            </div>
+            {% if session.notes %}
+            <div class="col-span-2">
+                <dt class="font-medium text-gray-500">Notes</dt>
+                <dd>{{ session.notes }}</dd>
+            </div>
+            {% endif %}
+        </dl>
+
+        {% if canAccess %}
+            {% if isRegistered %}
+                <form method="post" action="{{ path('session_unregister', {id: session.id}) }}" class="mt-6">
+                    <input type="hidden" name="_token" value="{{ csrf_token('session_unregister_' ~ session.id) }}">
+                    <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 text-sm">
+                        Se désinscrire
+                    </button>
+                </form>
+            {% else %}
+                <form method="post" action="{{ path('session_register', {id: session.id}) }}" class="mt-6">
+                    <input type="hidden" name="_token" value="{{ csrf_token('session_register_' ~ session.id) }}">
+                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 text-sm">
+                        S'inscrire à cette séance
+                    </button>
+                </form>
+            {% endif %}
+        {% else %}
+            <p class="mt-6 text-sm text-red-500">Vous n'avez pas accès à cette séance (vérifiez votre type de membership).</p>
+        {% endif %}
+    </div>
+
+    <!-- Liste des inscrits -->
+    <div class="bg-white shadow rounded-lg p-6">
+        <h2 class="text-lg font-semibold text-gray-800 mb-4">Inscrits ({{ session.registrations|length }})</h2>
+        {% if session.registrations is empty %}
+            <p class="text-gray-500 text-sm">Aucun inscrit pour le moment.</p>
+        {% else %}
+            <ul class="divide-y divide-gray-100">
+            {% for reg in session.registrations %}
+                <li class="py-2 text-sm flex items-center">
+                    <span class="w-2 h-2 rounded-full bg-green-400 mr-2"></span>
+                    {{ reg.user.fullName }}
+                </li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

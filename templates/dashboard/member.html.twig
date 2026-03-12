@@ -1,0 +1,72 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon tableau de bord - BoisguiBad{% endblock %}
+
+{% block body %}
+<div class="px-4">
+    <h1 class="text-2xl font-bold text-gray-900 mb-6">Bonjour, {{ app.user.firstName }} 👋</h1>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Prochaines séances -->
+        <div class="bg-white shadow rounded-lg p-6">
+            <h2 class="text-lg font-semibold text-gray-800 mb-4">🏸 Mes prochaines séances</h2>
+            {% if upcomingSessions is empty %}
+                <p class="text-gray-500 text-sm">Aucune inscription à venir.</p>
+            {% else %}
+                <ul class="space-y-2">
+                {% for reg in upcomingSessions %}
+                    <li class="flex items-center justify-between text-sm">
+                        <span class="font-medium">{{ reg.session.type.label() }}</span>
+                        <span class="text-gray-500">{{ reg.session.date|date('d/m H:i') }}</span>
+                    </li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+            <a href="{{ path('session_list') }}" class="mt-4 block text-blue-600 text-sm hover:underline">Voir toutes les séances →</a>
+        </div>
+
+        <!-- Événements -->
+        <div class="bg-white shadow rounded-lg p-6">
+            <h2 class="text-lg font-semibold text-gray-800 mb-4">🏆 Mes événements</h2>
+            {% if myEventRegistrations is empty %}
+                <p class="text-gray-500 text-sm">Aucune inscription.</p>
+            {% else %}
+                <ul class="space-y-2">
+                {% for reg in myEventRegistrations %}
+                    <li class="text-sm">
+                        <span class="font-medium">{{ reg.event.title }}</span>
+                        <span class="ml-2 px-2 py-0.5 rounded-full text-xs
+                            {% if reg.status.value == 'INSCRIT' %}bg-green-100 text-green-700
+                            {% elseif reg.status.value == 'DESISTE' %}bg-red-100 text-red-700
+                            {% else %}bg-yellow-100 text-yellow-700{% endif %}">
+                            {{ reg.status.label() }}
+                        </span>
+                    </li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+            <a href="{{ path('event_list') }}" class="mt-4 block text-blue-600 text-sm hover:underline">Voir les événements →</a>
+        </div>
+
+        <!-- Objets trouvés -->
+        <div class="bg-white shadow rounded-lg p-6">
+            <h2 class="text-lg font-semibold text-gray-800 mb-4">🎒 Objets trouvés récents</h2>
+            {% if recentLostItems is empty %}
+                <p class="text-gray-500 text-sm">Aucun objet trouvé.</p>
+            {% else %}
+                <ul class="space-y-2">
+                {% for item in recentLostItems %}
+                    <li class="text-sm flex items-center justify-between">
+                        <span>{{ item.description|slice(0, 30) }}{% if item.description|length > 30 %}...{% endif %}</span>
+                        <span class="px-2 py-0.5 rounded-full text-xs {% if item.status.value == 'TROUVE' %}bg-yellow-100 text-yellow-700{% else %}bg-green-100 text-green-700{% endif %}">
+                            {{ item.status.label() }}
+                        </span>
+                    </li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+            <a href="{{ path('lost_item_list') }}" class="mt-4 block text-blue-600 text-sm hover:underline">Voir tous les objets →</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
