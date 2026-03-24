@@ -13,3 +13,20 @@ when@test:
         test: true
         session:
             storage_factory_id: session.storage.factory.mock_file
+
+when@prod:
+    framework:
+        # REMOTE_ADDR est une valeur spéciale Symfony signifiant "faire confiance à l'IP
+        # de connexion directe" — correct pour Render (reverse proxy).
+        # Voir : https://symfony.com/doc/current/deployment/proxies.html
+        trusted_proxies: '127.0.0.1,REMOTE_ADDR'
+        trusted_headers:
+            - x-forwarded-for
+            - x-forwarded-host
+            - x-forwarded-proto
+            - x-forwarded-port
+            - x-forwarded-prefix
+        session:
+            cookie_secure: true
+            cookie_samesite: lax
+            cookie_httponly: true

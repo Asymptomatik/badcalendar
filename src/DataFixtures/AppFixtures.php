@@ -33,7 +33,7 @@ class AppFixtures extends Fixture
         $admin->setFirstName('Admin');
         $admin->setLastName('Bureau');
         $admin->setRoles(['ROLE_ADMIN', 'ROLE_MEMBER']);
-        $admin->setPassword($this->passwordHasher->hashPassword($admin, 'admin123'));
+        $admin->setPassword($this->passwordHasher->hashPassword($admin, 'Admin@BoisguiBad2026!'));
         $admin->setIsVerified(true);
         $admin->setMemberType(MemberType::COMPETITEUR);
         $manager->persist($admin);
@@ -53,7 +53,7 @@ class AppFixtures extends Fixture
             $user->setFirstName($firstName);
             $user->setLastName($lastName);
             $user->setRoles(['ROLE_MEMBER']);
-            $user->setPassword($this->passwordHasher->hashPassword($user, 'member123'));
+            $user->setPassword($this->passwordHasher->hashPassword($user, 'Member@BoisguiBad2026!'));
             $user->setIsVerified(true);
             $user->setMemberType(MemberType::LOISIR);
             $manager->persist($user);
@@ -75,7 +75,7 @@ class AppFixtures extends Fixture
             $user->setFirstName($firstName);
             $user->setLastName($lastName);
             $user->setRoles(['ROLE_MEMBER']);
-            $user->setPassword($this->passwordHasher->hashPassword($user, 'member123'));
+            $user->setPassword($this->passwordHasher->hashPassword($user, 'Member@BoisguiBad2026!'));
             $user->setIsVerified(true);
             $user->setMemberType(MemberType::COMPETITEUR);
             $manager->persist($user);
