@@ -1,46 +1,89 @@
 {% extends 'base.html.twig' %}
-
 {% block title %}Membres - Admin BoisguiBad{% endblock %}
 
 {% block body %}
-<div class="px-4">
-    <h1 class="text-2xl font-bold text-gray-900 mb-6">Gestion des membres</h1>
+<div class="mb-8">
+    <a href="{{ path('admin_dashboard') }}" class="back-link flex items-center gap-1">
+        <span class="material-symbols-outlined text-base">arrow_back</span>
+        Tableau de bord
+    </a>
+    <h1 class="text-2xl font-bold text-on-surface mt-1">Gestion des membres</h1>
+</div>
 
-    <div class="bg-white shadow rounded-lg overflow-hidden">
-        <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
-                <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nom</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Vérifié</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-200">
-            {% for user in users %}
-                <tr>
-                    <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ user.fullName }}</td>
-                    <td class="px-6 py-4 text-sm text-gray-500">{{ user.email }}</td>
-                    <td class="px-6 py-4 text-sm">
-                        {% if user.memberType %}
-                            <span class="px-2 py-1 rounded-full text-xs {% if user.memberType.value == 'LOISIR' %}bg-blue-100 text-blue-700{% else %}bg-purple-100 text-purple-700{% endif %}">
-                                {{ user.memberType.label() }}
-                            </span>
-                        {% else %}
-                            <span class="text-red-500 text-xs">Non assigné</span>
-                        {% endif %}
-                    </td>
-                    <td class="px-6 py-4 text-sm">
-                        {% if user.isVerified %}<span class="text-green-600">✓</span>{% else %}<span class="text-red-500">✗</span>{% endif %}
-                    </td>
-                    <td class="px-6 py-4 text-sm">
-                        <a href="{{ path('admin_member_show', {id: user.id}) }}" class="text-blue-600 hover:underline">Détails</a>
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+    <div class="bg-surface-container-low rounded-lg p-4 flex items-center gap-3">
+        <span class="material-symbols-outlined text-2xl text-on-surface-variant">people</span>
+        <div>
+            <div class="text-2xl font-bold text-on-surface">{{ users|length }}</div>
+            <div class="text-xs text-on-surface-variant">Total adhérents</div>
+        </div>
     </div>
+    <div class="bg-surface-container-low rounded-lg p-4 flex items-center gap-3">
+        <span class="material-symbols-outlined text-2xl text-on-surface-variant">check</span>
+        <div>
+            <div class="text-2xl font-bold text-on-surface">{{ users|filter(u => u.isVerified)|length }}</div>
+            <div class="text-xs text-on-surface-variant">Comptes actifs</div>
+        </div>
+    </div>
+</div>
+
+<div class="mb-4">
+    <div class="bg-surface-container-low rounded-xl flex items-center gap-2 px-4 py-2 max-w-sm">
+        <span class="material-symbols-outlined text-on-surface-variant text-base">search</span>
+        <input type="text" placeholder="Rechercher un membre…" class="bg-transparent outline-none text-sm text-on-surface placeholder:text-on-surface-variant flex-1" id="memberSearch">
+    </div>
+</div>
+
+<div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden">
+    <table class="min-w-full" id="membersTable">
+        <thead class="bg-surface-container-low">
+            <tr>
+                <th class="th">Nom</th>
+                <th class="th">Email</th>
+                <th class="th">Type</th>
+                <th class="th">Statut</th>
+                <th class="th"></th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-outline-variant">
+        {% for user in users %}
+            <tr class="hover:bg-surface-container transition-colors">
+                <td class="td">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full bg-primary text-on-primary text-xs font-bold flex items-center justify-center flex-shrink-0">
+                            {{ user.firstName|slice(0,1)|upper }}{{ user.lastName|slice(0,1)|upper }}
+                        </div>
+                        <div>
+                            <div class="font-semibold text-on-surface text-sm">{{ user.fullName }}</div>
+                        </div>
+                    </div>
+                </td>
+                <td class="td text-on-surface-variant text-sm">{{ user.email }}</td>
+                <td class="td">
+                    {% if user.memberType %}
+                        <span class="{% if user.memberType.value == 'LOISIR' %}badge-slate{% else %}badge-violet{% endif %}">
+                            {{ user.memberType.label() }}
+                        </span>
+                    {% else %}
+                        <span class="badge-error">Non assigné</span>
+                    {% endif %}
+                </td>
+                <td class="td">
+                    {% if user.isVerified %}
+                        <span class="badge-secondary flex items-center gap-1 w-fit">
+                            <span class="material-symbols-outlined text-xs">check</span>
+                            Vérifié
+                        </span>
+                    {% else %}
+                        <span class="badge-error">En attente</span>
+                    {% endif %}
+                </td>
+                <td class="px-6 py-4 text-right">
+                    <a href="{{ path('admin_member_show', {id: user.id}) }}" class="text-primary text-sm hover:underline">Détails</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 </div>
 {% endblock %}

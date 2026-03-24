@@ -1,72 +1,92 @@
 {% extends 'base.html.twig' %}
-
-{% block title %}Mon tableau de bord - BoisguiBad{% endblock %}
+{% block title %}Tableau de bord - BoisguiBad{% endblock %}
 
 {% block body %}
-<div class="px-4">
-    <h1 class="text-2xl font-bold text-gray-900 mb-6">Bonjour, {{ app.user.firstName }} 👋</h1>
+<div class="mb-8">
+    <h1 class="text-2xl font-bold text-on-surface flex items-center gap-2">
+        <span class="material-symbols-outlined text-2xl">waving_hand</span>
+        Bonjour, {{ app.user.firstName }}
+    </h1>
+    <p class="text-on-surface-variant text-sm mt-1">Voici un aperçu de votre activité au club</p>
+</div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- Prochaines séances -->
-        <div class="bg-white shadow rounded-lg p-6">
-            <h2 class="text-lg font-semibold text-gray-800 mb-4">🏸 Mes prochaines séances</h2>
-            {% if upcomingSessions is empty %}
-                <p class="text-gray-500 text-sm">Aucune inscription à venir.</p>
-            {% else %}
-                <ul class="space-y-2">
-                {% for reg in upcomingSessions %}
-                    <li class="flex items-center justify-between text-sm">
-                        <span class="font-medium">{{ reg.session.type.label() }}</span>
-                        <span class="text-gray-500">{{ reg.session.date|date('d/m H:i') }}</span>
-                    </li>
-                {% endfor %}
-                </ul>
-            {% endif %}
-            <a href="{{ path('session_list') }}" class="mt-4 block text-blue-600 text-sm hover:underline">Voir toutes les séances →</a>
-        </div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-        <!-- Événements -->
-        <div class="bg-white shadow rounded-lg p-6">
-            <h2 class="text-lg font-semibold text-gray-800 mb-4">🏆 Mes événements</h2>
-            {% if myEventRegistrations is empty %}
-                <p class="text-gray-500 text-sm">Aucune inscription.</p>
-            {% else %}
-                <ul class="space-y-2">
-                {% for reg in myEventRegistrations %}
-                    <li class="text-sm">
-                        <span class="font-medium">{{ reg.event.title }}</span>
-                        <span class="ml-2 px-2 py-0.5 rounded-full text-xs
-                            {% if reg.status.value == 'INSCRIT' %}bg-green-100 text-green-700
-                            {% elseif reg.status.value == 'DESISTE' %}bg-red-100 text-red-700
-                            {% else %}bg-yellow-100 text-yellow-700{% endif %}">
-                            {{ reg.status.label() }}
-                        </span>
-                    </li>
-                {% endfor %}
-                </ul>
-            {% endif %}
-            <a href="{{ path('event_list') }}" class="mt-4 block text-blue-600 text-sm hover:underline">Voir les événements →</a>
+    <div class="bg-surface-container-lowest rounded-xl shadow-sm p-6">
+        <div class="flex items-center gap-3 mb-5">
+            <div class="w-10 h-10 bg-primary-fixed text-on-primary-fixed rounded-full flex items-center justify-center">
+                <span class="material-symbols-outlined">sports_tennis</span>
+            </div>
+            <h2 class="font-semibold text-on-surface">Mes prochaines séances</h2>
         </div>
-
-        <!-- Objets trouvés -->
-        <div class="bg-white shadow rounded-lg p-6">
-            <h2 class="text-lg font-semibold text-gray-800 mb-4">🎒 Objets trouvés récents</h2>
-            {% if recentLostItems is empty %}
-                <p class="text-gray-500 text-sm">Aucun objet trouvé.</p>
-            {% else %}
-                <ul class="space-y-2">
-                {% for item in recentLostItems %}
-                    <li class="text-sm flex items-center justify-between">
-                        <span>{{ item.description|slice(0, 30) }}{% if item.description|length > 30 %}...{% endif %}</span>
-                        <span class="px-2 py-0.5 rounded-full text-xs {% if item.status.value == 'TROUVE' %}bg-yellow-100 text-yellow-700{% else %}bg-green-100 text-green-700{% endif %}">
-                            {{ item.status.label() }}
-                        </span>
-                    </li>
-                {% endfor %}
-                </ul>
-            {% endif %}
-            <a href="{{ path('lost_item_list') }}" class="mt-4 block text-blue-600 text-sm hover:underline">Voir tous les objets →</a>
-        </div>
+        {% if upcomingSessions is empty %}
+            <p class="text-on-surface-variant text-sm">Aucune inscription à venir.</p>
+        {% else %}
+            <ul class="space-y-3">
+            {% for reg in upcomingSessions %}
+                <li class="flex items-center justify-between">
+                    <span class="text-sm font-medium text-on-surface">{{ reg.session.type.label() }}</span>
+                    <span class="text-xs text-on-surface-variant">{{ reg.session.date|date('d/m H:i') }}</span>
+                </li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+        <a href="{{ path('session_list') }}" class="mt-5 block text-sm font-semibold text-primary hover:underline">
+            Voir toutes les séances →
+        </a>
     </div>
+
+    <div class="bg-surface-container-lowest rounded-xl shadow-sm p-6">
+        <div class="flex items-center gap-3 mb-5">
+            <div class="w-10 h-10 bg-tertiary-fixed rounded-full flex items-center justify-center">
+                <span class="material-symbols-outlined">emoji_events</span>
+            </div>
+            <h2 class="font-semibold text-on-surface">Mes événements</h2>
+        </div>
+        {% if myEventRegistrations is empty %}
+            <p class="text-on-surface-variant text-sm">Aucune inscription.</p>
+        {% else %}
+            <ul class="space-y-3">
+            {% for reg in myEventRegistrations %}
+                <li class="flex items-center justify-between gap-2">
+                    <span class="text-sm font-medium text-on-surface truncate">{{ reg.event.title }}</span>
+                    <span class="flex-shrink-0 {% if reg.status.value == 'INSCRIT' %}badge-secondary{% elseif reg.status.value == 'DESISTE' %}badge-error{% else %}badge-amber{% endif %}">
+                        {{ reg.status.label() }}
+                    </span>
+                </li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+        <a href="{{ path('event_list') }}" class="mt-5 block text-sm font-semibold text-primary hover:underline">
+            Voir les événements →
+        </a>
+    </div>
+
+    <div class="bg-surface-container-lowest rounded-xl shadow-sm p-6">
+        <div class="flex items-center gap-3 mb-5">
+            <div class="w-10 h-10 bg-secondary-container text-on-secondary-container rounded-full flex items-center justify-center">
+                <span class="material-symbols-outlined">backpack</span>
+            </div>
+            <h2 class="font-semibold text-on-surface">Objets trouvés récents</h2>
+        </div>
+        {% if recentLostItems is empty %}
+            <p class="text-on-surface-variant text-sm">Aucun objet trouvé.</p>
+        {% else %}
+            <ul class="space-y-3">
+            {% for item in recentLostItems %}
+                <li class="flex items-center justify-between gap-2">
+                    <span class="text-sm text-on-surface truncate">{{ item.description|slice(0, 28) }}{% if item.description|length > 28 %}…{% endif %}</span>
+                    <span class="flex-shrink-0 {% if item.status.value == 'TROUVE' %}badge-amber{% else %}badge-secondary{% endif %}">
+                        {{ item.status.label() }}
+                    </span>
+                </li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+        <a href="{{ path('lost_item_list') }}" class="mt-5 block text-sm font-semibold text-primary hover:underline">
+            Voir tous les objets →
+        </a>
+    </div>
+
 </div>
 {% endblock %}

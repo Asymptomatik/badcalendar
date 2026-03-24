@@ -21,6 +21,14 @@ class SessionService implements SessionServiceInterface
         private readonly SessionRegistrationRepository $registrationRepository,
     ) {}
 
+    public function filterAccessibleSessions(array $sessions, User $user): array
+    {
+        return array_values(array_filter(
+            $sessions,
+            fn (Session $session): bool => $this->canAccess($session, $user)
+        ));
+    }
+
     /** Inscrit un membre à une séance */
     public function register(Session $session, User $user): void
     {

@@ -1,36 +1,48 @@
 {% extends 'base.html.twig' %}
-
 {% block title %}Objets trouvés - BoisguiBad{% endblock %}
 
 {% block body %}
-<div class="px-4">
-    <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold text-gray-900">Objets trouvés</h1>
-        <a href="{{ path('lost_item_new') }}" class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm hover:bg-blue-700">
-            + Déclarer un objet
-        </a>
+<div class="flex items-center justify-between mb-8">
+    <div>
+        <h1 class="text-2xl font-bold text-on-surface">Objets trouvés</h1>
+        <p class="text-on-surface-variant text-sm mt-1">Avez-vous perdu quelque chose au club ?</p>
     </div>
-
-    {% if lostItems is empty %}
-        <p class="text-gray-500">Aucun objet trouvé enregistré.</p>
-    {% else %}
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {% for item in lostItems %}
-            <div class="bg-white shadow rounded-lg p-4">
-                <p class="text-sm font-medium text-gray-900 mb-2">{{ item.description }}</p>
-                <p class="text-xs text-gray-500">Trouvé le {{ item.foundAt|date('d/m/Y') }}</p>
-                {% if item.location %}
-                    <p class="text-xs text-gray-500">📍 {{ item.location }}</p>
-                {% endif %}
-                <div class="mt-3 flex items-center justify-between">
-                    <span class="px-2 py-1 rounded-full text-xs {% if item.status.value == 'TROUVE' %}bg-yellow-100 text-yellow-700{% else %}bg-green-100 text-green-700{% endif %}">
-                        {{ item.status.label() }}
-                    </span>
-                    <span class="text-xs text-gray-400">par {{ item.declaredBy.fullName }}</span>
-                </div>
-            </div>
-        {% endfor %}
-        </div>
-    {% endif %}
+    <a href="{{ path('lost_item_new') }}" class="btn-primary">
+        <span class="material-symbols-outlined text-sm">add</span>
+        Déclarer un objet
+    </a>
 </div>
+
+{% if lostItems is empty %}
+    <div class="bg-surface-container-lowest rounded-xl shadow-sm p-12 text-center">
+        <span class="material-symbols-outlined text-5xl text-on-surface-variant mb-3 block">backpack</span>
+        <p class="text-on-surface-variant font-medium">Aucun objet trouvé enregistré.</p>
+    </div>
+{% else %}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+    {% for item in lostItems %}
+        <div class="bg-surface-container-lowest rounded-xl shadow-sm p-5">
+            <div class="flex items-start gap-3 mb-3">
+                <span class="material-symbols-outlined text-on-surface-variant flex-shrink-0">backpack</span>
+                <p class="font-semibold text-on-surface leading-snug">{{ item.description }}</p>
+            </div>
+            <div class="space-y-1 text-xs text-on-surface-variant mb-4">
+                <p>Trouvé le {{ item.foundAt|date('d/m/Y') }}</p>
+                {% if item.location %}
+                <p class="flex items-center gap-1">
+                    <span class="material-symbols-outlined text-xs">location_on</span>
+                    {{ item.location }}
+                </p>
+                {% endif %}
+            </div>
+            <div class="flex items-center justify-between pt-3 border-t border-outline-variant">
+                <span class="{% if item.status.value == 'TROUVE' %}badge-amber{% else %}badge-secondary{% endif %}">
+                    {{ item.status.label() }}
+                </span>
+                <span class="text-xs text-on-surface-variant">par {{ item.declaredBy.fullName }}</span>
+            </div>
+        </div>
+    {% endfor %}
+    </div>
+{% endif %}
 {% endblock %}

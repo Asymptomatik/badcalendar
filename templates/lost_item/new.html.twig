@@ -1,29 +1,64 @@
 {% extends 'base.html.twig' %}
-
 {% block title %}Déclarer un objet trouvé - BoisguiBad{% endblock %}
 
 {% block body %}
-<div class="max-w-lg mx-auto bg-white shadow-lg rounded-lg p-8">
-    <h1 class="text-2xl font-bold text-blue-800 mb-6">Déclarer un objet trouvé</h1>
+<a href="{{ path('lost_item_list') }}" class="back-link">
+    <span class="material-symbols-outlined text-base">arrow_back</span>
+    Retour aux objets trouvés
+</a>
 
-    {{ form_start(form, {'attr': {'class': 'space-y-4'}}) }}
-        <div>
-            {{ form_label(form.description, null, {'label_attr': {'class': 'block text-sm font-medium text-gray-700 mb-1'}}) }}
-            {{ form_widget(form.description, {'attr': {'class': 'w-full border border-gray-300 rounded-md px-3 py-2', 'rows': '3'}}) }}
-            {{ form_errors(form.description) }}
+<div class="grid gap-6 xl:grid-cols-[minmax(0,1.8fr)_18rem] xl:items-start">
+    <div>
+        <div class="mb-8 mt-2">
+            <h1 class="text-2xl font-bold text-on-surface">Déclarer un objet trouvé</h1>
+            <p class="text-on-surface-variant text-sm mt-1">Aidez les membres à retrouver leurs affaires en décrivant l'objet et le lieu de découverte.</p>
         </div>
-        <div>
-            {{ form_label(form.foundAt, null, {'label_attr': {'class': 'block text-sm font-medium text-gray-700 mb-1'}}) }}
-            {{ form_widget(form.foundAt, {'attr': {'class': 'w-full border border-gray-300 rounded-md px-3 py-2'}}) }}
-            {{ form_errors(form.foundAt) }}
+
+        <div class="bg-surface-container-lowest rounded-xl shadow-sm p-8">
+            {{ form_start(form, {'attr': {'class': 'space-y-5'}}) }}
+                <div>
+                    {{ form_label(form.description, null, {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.description, {'attr': {'class': 'form-textarea', 'rows': '4', 'placeholder': "Décrivez l'objet trouvé…"}}) }}
+                    {{ form_errors(form.description) }}
+                </div>
+                <div class="grid gap-5 md:grid-cols-2">
+                    <div>
+                        {{ form_label(form.foundAt, null, {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.foundAt, {'attr': {'class': 'form-input'}}) }}
+                        {{ form_errors(form.foundAt) }}
+                    </div>
+                    <div>
+                        {{ form_label(form.location, null, {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.location, {'attr': {'class': 'form-input', 'placeholder': 'Ex: Vestiaires, terrain 3…'}}) }}
+                        {{ form_errors(form.location) }}
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary w-full justify-center py-2.5">Déclarer l'objet</button>
+            {{ form_end(form) }}
         </div>
-        <div>
-            {{ form_label(form.location, null, {'label_attr': {'class': 'block text-sm font-medium text-gray-700 mb-1'}}) }}
-            {{ form_widget(form.location, {'attr': {'class': 'w-full border border-gray-300 rounded-md px-3 py-2'}}) }}
+    </div>
+
+    <div class="space-y-4">
+        <div class="card p-5 bg-surface-container-low">
+            <h2 class="text-sm font-semibold text-on-surface mb-3 flex items-center gap-2">
+                <span class="material-symbols-outlined text-base">lightbulb</span>
+                Bon réflexe
+            </h2>
+            <p class="text-sm text-on-surface-variant leading-relaxed">
+                Plus la description est précise, plus l'objet sera simple à identifier pour son propriétaire.
+            </p>
         </div>
-        <button type="submit" class="w-full bg-blue-800 text-white py-2 px-4 rounded-md hover:bg-blue-700 font-medium">
-            Déclarer l'objet
-        </button>
-    {{ form_end(form) }}
+        <div class="card p-5">
+            <h2 class="text-sm font-semibold text-on-surface mb-3 flex items-center gap-2">
+                <span class="material-symbols-outlined text-base">inventory_2</span>
+                À préciser si possible
+            </h2>
+            <ul class="space-y-2.5 text-sm text-on-surface-variant">
+                <li>Couleur ou marque visible</li>
+                <li>Zone exacte où l'objet a été trouvé</li>
+                <li>Date de découverte</li>
+            </ul>
+        </div>
+    </div>
 </div>
 {% endblock %}

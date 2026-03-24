@@ -23,8 +23,14 @@ yarn-error.log
 
 # Uploads
 /public/uploads/
+/composer.phar
 
 # IDE
 /.idea/
 /.vscode/
 *.DS_Store
+
+###> symfony/asset-mapper ###
+/public/assets/
+/assets/vendor/
+###< symfony/asset-mapper ###

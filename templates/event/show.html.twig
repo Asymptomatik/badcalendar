@@ -1,77 +1,82 @@
 {% extends 'base.html.twig' %}
-
 {% block title %}{{ event.title }} - BoisguiBad{% endblock %}
 
 {% block body %}
-<div class="px-4 max-w-3xl">
-    <div class="mb-4">
-        <a href="{{ path('event_list') }}" class="text-blue-600 hover:underline text-sm">← Retour aux événements</a>
-    </div>
+<a href="{{ path('event_list') }}" class="back-link">
+    <span class="material-symbols-outlined text-base">arrow_back</span>
+    Retour aux événements
+</a>
 
-    <div class="bg-white shadow rounded-lg p-6 mb-6">
-        <h1 class="text-2xl font-bold text-gray-900 mb-4">{{ event.title }}</h1>
+<div class="max-w-3xl space-y-6">
+    <div class="bg-surface-container-lowest rounded-xl shadow-sm p-6">
+        <div class="mb-6">
+            {% if event.category is defined and event.category %}
+                <span class="badge-secondary mb-3 inline-block">{{ event.category.label() }}</span>
+            {% endif %}
+            <h1 class="text-2xl font-bold text-on-surface">{{ event.title }}</h1>
+        </div>
 
-        <dl class="grid grid-cols-2 gap-4 text-sm mb-4">
-            <div>
-                <dt class="font-medium text-gray-500">Date</dt>
-                <dd>{{ event.date|date('d/m/Y à H:i') }}</dd>
+        <div class="dl-grid mb-6">
+            <div class="dl-item">
+                <dt class="dl-label">Date</dt>
+                <dd class="dl-value">{{ event.date|date('d/m/Y à H:i') }}</dd>
             </div>
             {% if event.location %}
-            <div>
-                <dt class="font-medium text-gray-500">Lieu</dt>
-                <dd>{{ event.location }}</dd>
+            <div class="dl-item">
+                <dt class="dl-label">Lieu</dt>
+                <dd class="dl-value">{{ event.location }}</dd>
             </div>
             {% endif %}
             {% if event.maxParticipants %}
-            <div>
-                <dt class="font-medium text-gray-500">Places disponibles</dt>
-                <dd>{{ event.availablePlaces }} / {{ event.maxParticipants }}</dd>
+            <div class="dl-item">
+                <dt class="dl-label">Places disponibles</dt>
+                <dd class="dl-value">{{ event.availablePlaces }} <span class="text-on-surface-variant font-normal">/ {{ event.maxParticipants }}</span></dd>
             </div>
             {% endif %}
             {% if event.registrationDeadline %}
-            <div>
-                <dt class="font-medium text-gray-500">Clôture des inscriptions</dt>
-                <dd>{{ event.registrationDeadline|date('d/m/Y') }}</dd>
+            <div class="dl-item">
+                <dt class="dl-label">Clôture des inscriptions</dt>
+                <dd class="dl-value">{{ event.registrationDeadline|date('d/m/Y') }}</dd>
             </div>
             {% endif %}
-        </dl>
+        </div>
 
         {% if event.description %}
-            <p class="text-gray-700 text-sm mb-4">{{ event.description }}</p>
+            <p class="text-on-surface-variant text-sm leading-relaxed mb-6 pb-6 border-b border-outline-variant">{{ event.description }}</p>
         {% endif %}
 
         {% if registration %}
-            <div class="flex items-center gap-4">
-                <span class="px-3 py-1 rounded-full text-sm
-                    {% if registration.status.value == 'INSCRIT' %}bg-green-100 text-green-700
-                    {% elseif registration.status.value == 'DESISTE' %}bg-red-100 text-red-700
-                    {% else %}bg-yellow-100 text-yellow-700{% endif %}">
+            <div class="flex flex-wrap items-center gap-3">
+                <span class="{% if registration.status.value == 'INSCRIT' %}badge-secondary{% elseif registration.status.value == 'DESISTE' %}badge-error{% else %}badge-amber{% endif %}">
                     {{ registration.status.label() }}
                 </span>
                 {% if registration.status.value == 'INSCRIT' %}
                     <form method="post" action="{{ path('event_desist', {id: event.id}) }}">
                         <input type="hidden" name="_token" value="{{ csrf_token('event_desist_' ~ event.id) }}">
-                        <button class="text-red-600 text-sm hover:underline">Se désister</button>
+                        <button class="btn-danger text-xs">Se désister</button>
                     </form>
                     {% if not registration.confirmedAt %}
                     <form method="post" action="{{ path('event_confirm', {id: event.id}) }}">
                         <input type="hidden" name="_token" value="{{ csrf_token('event_confirm_' ~ event.id) }}">
-                        <button class="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700">Confirmer ma participation</button>
+                        <button class="btn-success text-xs">Confirmer ma participation</button>
                     </form>
                     {% else %}
-                        <span class="text-green-600 text-sm">✓ Participation confirmée</span>
+                        <span class="text-sm text-on-surface font-semibold flex items-center gap-1">
+                            <span class="material-symbols-outlined text-sm">check_circle</span>
+                            Participation confirmée
+                        </span>
                     {% endif %}
                 {% elseif registration.status.value == 'DESISTE' %}
                     <form method="post" action="{{ path('event_register', {id: event.id}) }}">
                         <input type="hidden" name="_token" value="{{ csrf_token('event_register_' ~ event.id) }}">
-                        <button class="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700">Se réinscrire</button>
+                        <button class="btn-primary text-xs">Se réinscrire</button>
                     </form>
                 {% endif %}
             </div>
         {% else %}
-            <form method="post" action="{{ path('event_register', {id: event.id}) }}" class="mt-4">
+            <form method="post" action="{{ path('event_register', {id: event.id}) }}">
                 <input type="hidden" name="_token" value="{{ csrf_token('event_register_' ~ event.id) }}">
-                <button class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 text-sm">S'inscrire</button>
+                <button class="btn-primary">S'inscrire à cet événement</button>
             </form>
         {% endif %}
     </div>

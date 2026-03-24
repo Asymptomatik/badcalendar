@@ -7,6 +7,13 @@ use App\Entity\User;
 
 interface SessionServiceInterface
 {
+    /**
+     * @param list<Session> $sessions
+     *
+     * @return list<Session>
+     */
+    public function filterAccessibleSessions(array $sessions, User $user): array;
+
     /** Inscrit un membre à une séance */
     public function register(Session $session, User $user): void;
 

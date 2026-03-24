@@ -1,45 +1,46 @@
 {% extends 'base.html.twig' %}
-
-{% block title %}Inscriptions - {{ event.title }}{% endblock %}
+{% block title %}Inscriptions {{ event.title }} - Admin{% endblock %}
 
 {% block body %}
-<div class="px-4">
-    <div class="mb-4">
-        <a href="{{ path('admin_event_list') }}" class="text-blue-600 hover:underline text-sm">← Retour aux événements</a>
-    </div>
+<a href="{{ path('admin_event_list') }}" class="back-link flex items-center gap-1">
+    <span class="material-symbols-outlined text-base">arrow_back</span>
+    Retour aux événements
+</a>
 
-    <h1 class="text-2xl font-bold text-gray-900 mb-6">Inscriptions — {{ event.title }}</h1>
+<div class="mb-8 mt-4">
+    <h1 class="text-2xl font-bold text-on-surface">{{ event.title }}</h1>
+    <p class="text-on-surface-variant text-sm mt-1">
+        <span class="material-symbols-outlined text-base align-middle">people</span>
+        {{ event.registrations|length }} inscription(s)
+    </p>
+</div>
 
-    <div class="bg-white shadow rounded-lg overflow-hidden">
-        <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
-                <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Membre</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Statut</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Confirmé le</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Inscrit le</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-200">
-            {% for reg in event.registrations %}
-                <tr>
-                    <td class="px-6 py-4 text-sm font-medium">{{ reg.user.fullName }}</td>
-                    <td class="px-6 py-4">
-                        <span class="px-2 py-1 rounded-full text-xs
-                            {% if reg.status.value == 'INSCRIT' %}bg-green-100 text-green-700
-                            {% elseif reg.status.value == 'DESISTE' %}bg-red-100 text-red-700
-                            {% else %}bg-yellow-100 text-yellow-700{% endif %}">
-                            {{ reg.status.label() }}
-                        </span>
-                    </td>
-                    <td class="px-6 py-4 text-sm text-gray-500">
-                        {{ reg.confirmedAt ? reg.confirmedAt|date('d/m/Y') : '—' }}
-                    </td>
-                    <td class="px-6 py-4 text-sm text-gray-500">{{ reg.createdAt|date('d/m/Y') }}</td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    </div>
+<div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden">
+    <table class="min-w-full">
+        <thead class="bg-surface-container-low">
+            <tr>
+                <th class="th">Membre</th>
+                <th class="th">Email</th>
+                <th class="th">Statut</th>
+                <th class="th">Date inscription</th>
+                <th class="th">Confirmé le</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-outline-variant">
+        {% for reg in event.registrations %}
+            <tr class="hover:bg-surface-container transition-colors">
+                <td class="td-bold">{{ reg.user.fullName }}</td>
+                <td class="td text-on-surface-variant">{{ reg.user.email }}</td>
+                <td class="td">
+                    <span class="{% if reg.status.value == 'INSCRIT' %}badge-secondary{% elseif reg.status.value == 'DESISTE' %}badge-error{% else %}badge-amber{% endif %}">
+                        {{ reg.status.label() }}
+                    </span>
+                </td>
+                <td class="td">{{ reg.createdAt|date('d/m/Y') }}</td>
+                <td class="td">{{ reg.confirmedAt ? reg.confirmedAt|date('d/m/Y') : '—' }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 </div>
 {% endblock %}

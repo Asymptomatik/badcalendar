@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
 use App\Entity\Session;
 use App\Enum\SessionType;
 use App\Repository\SessionRepository;
@@ -28,8 +29,16 @@ class SessionController extends AbstractController
     #[Route('', name: 'session_list', methods: ['GET'])]
     public function index(): Response
     {
-        $sessions = $this->sessionRepository->findUpcoming(20);
         $user = $this->getUser();
+
+        if (!$user instanceof User) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $sessions = $this->sessionService->filterAccessibleSessions(
+            $this->sessionRepository->findUpcoming(20),
+            $user,
+        );
 
         return $this->render('session/index.html.twig', [
             'sessions' => $sessions,

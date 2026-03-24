@@ -92,6 +92,35 @@ class SessionServiceTest extends TestCase
         }
     }
 
+    public function testFilterAccessibleSessionsRemovesMercrediForLoisir(): void
+    {
+        $user = $this->createUser(MemberType::LOISIR);
+        $sessions = [
+            $this->createSession(SessionType::LUNDI),
+            $this->createSession(SessionType::MERCREDI),
+            $this->createSession(SessionType::JEUDI),
+            $this->createSession(SessionType::DIMANCHE),
+        ];
+
+        $filteredSessions = $this->service->filterAccessibleSessions($sessions, $user);
+
+        $this->assertCount(3, $filteredSessions);
+        $this->assertSame(
+            [SessionType::LUNDI, SessionType::JEUDI, SessionType::DIMANCHE],
+            array_map(static fn (Session $session): SessionType => $session->getType(), $filteredSessions)
+        );
+    }
+
+    public function testFilterAccessibleSessionsKeepsAllSessionsForCompetiteur(): void
+    {
+        $user = $this->createUser(MemberType::COMPETITEUR);
+        $sessions = array_map(fn (SessionType $type): Session => $this->createSession($type), SessionType::cases());
+
+        $filteredSessions = $this->service->filterAccessibleSessions($sessions, $user);
+
+        $this->assertCount(count(SessionType::cases()), $filteredSessions);
+    }
+
     // ---- register ----
 
     public function testRegisterThrowsExceptionWhenUserCannotAccess(): void

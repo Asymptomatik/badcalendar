@@ -15,9 +15,12 @@ security:
         main:
             lazy: true
             provider: app_user_provider
+            access_denied_handler: App\Security\AccessDeniedHandler
             form_login:
                 login_path: security_login
                 check_path: security_login
+                username_parameter: email
+                password_parameter: password
                 enable_csrf: true
                 default_target_path: dashboard_member
             logout:
