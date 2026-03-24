@@ -1,0 +1,75 @@
+{% extends 'base.html.twig' %}
+{% block title %}Séance du dimanche - BoisguiBad{% endblock %}
+
+{% block body %}
+<a href="{{ path('session_list') }}" class="back-link">
+    <span class="material-symbols-outlined text-base">arrow_back</span>
+    Retour aux séances
+</a>
+
+<div class="max-w-4xl space-y-6">
+    <div class="relative overflow-hidden rounded-3xl bg-primary text-on-primary px-6 py-7 sm:px-8 sm:py-9">
+        <div class="absolute inset-y-0 right-0 w-40 bg-gradient-to-l from-white/12 to-transparent"></div>
+        <div class="relative max-w-2xl">
+            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-on-primary/75">Organisation membre</p>
+            <h1 class="text-2xl sm:text-3xl font-bold mt-3">Proposer une séance du dimanche</h1>
+            <p class="text-sm text-on-primary/85 mt-3 leading-relaxed">
+                Cette page sert de point de départ pour lancer une séance informelle du dimanche, coordonner les disponibilités et rappeler les bonnes étapes d'organisation.
+            </p>
+        </div>
+    </div>
+
+    <div class="grid gap-6 lg:grid-cols-[minmax(0,1.7fr)_minmax(18rem,1fr)]">
+        <div class="card p-6 sm:p-7">
+            <h2 class="text-lg font-semibold text-on-surface mb-4">Comment ça marche ?</h2>
+            <div class="space-y-4">
+                <div class="rounded-2xl bg-surface-container-low p-4 flex gap-4">
+                    <div class="w-9 h-9 rounded-full bg-primary-fixed text-on-primary-fixed flex items-center justify-center font-bold text-sm flex-shrink-0">1</div>
+                    <div>
+                        <p class="font-semibold text-on-surface">Choisissez une heure et un créneau réalistes</p>
+                        <p class="text-sm text-on-surface-variant mt-1">Privilégiez un horaire clair et un lieu précis pour éviter les allers-retours de coordination.</p>
+                    </div>
+                </div>
+                <div class="rounded-2xl bg-surface-container-low p-4 flex gap-4">
+                    <div class="w-9 h-9 rounded-full bg-primary-fixed text-on-primary-fixed flex items-center justify-center font-bold text-sm flex-shrink-0">2</div>
+                    <div>
+                        <p class="font-semibold text-on-surface">Lancez le sondage dans le groupe</p>
+                        <p class="text-sm text-on-surface-variant mt-1">Les séances du dimanche fonctionnent comme une proposition membre, généralement relayée sur WhatsApp.</p>
+                    </div>
+                </div>
+                <div class="rounded-2xl bg-surface-container-low p-4 flex gap-4">
+                    <div class="w-9 h-9 rounded-full bg-primary-fixed text-on-primary-fixed flex items-center justify-center font-bold text-sm flex-shrink-0">3</div>
+                    <div>
+                        <p class="font-semibold text-on-surface">Confirmez seulement si le groupe suit</p>
+                        <p class="text-sm text-on-surface-variant mt-1">Attendez un minimum de retours avant de considérer la séance comme suffisamment engagée.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="space-y-4">
+            <div class="card p-5 bg-secondary-container/35">
+                <h2 class="text-sm font-semibold text-on-surface mb-3 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-base">forum</span>
+                    Bon canal
+                </h2>
+                <p class="text-sm text-on-surface-variant leading-relaxed">
+                    Le groupe WhatsApp reste le canal le plus rapide pour sonder les disponibilités, partager le lieu exact et confirmer le maintien de la séance.
+                </p>
+            </div>
+
+            <div class="card p-5">
+                <h2 class="text-sm font-semibold text-on-surface mb-3 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-base">checklist</span>
+                    Rappel pratique
+                </h2>
+                <ul class="space-y-2.5 text-sm text-on-surface-variant">
+                    <li>Annoncez l'heure de rendez-vous.</li>
+                    <li>Précisez le niveau ou l'intention si besoin.</li>
+                    <li>Évitez les confirmations trop tardives.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

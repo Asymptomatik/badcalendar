@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+{% block title %}Séances - Admin BoisguiBad{% endblock %}
+
+{% block body %}
+<div class="flex items-center justify-between mb-8">
+    <div>
+        <a href="{{ path('admin_dashboard') }}" class="back-link">
+            <span class="material-symbols-outlined text-base align-middle">arrow_back</span>
+            Tableau de bord
+        </a>
+        <h1 class="text-2xl font-bold text-on-surface mt-1">Gestion des séances</h1>
+    </div>
+</div>
+
+<div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden">
+    <table class="min-w-full">
+        <thead class="bg-surface-container-low">
+            <tr>
+                <th class="th">Type</th>
+                <th class="th">Date</th>
+                <th class="th">Responsable</th>
+                <th class="th">Inscrits</th>
+                <th class="th"></th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-outline-variant">
+        {% for session in sessions %}
+            <tr class="hover:bg-surface-container transition-colors {% if not session.responsableKeys and session.type.value != 'DIMANCHE' %}bg-error-container/30{% endif %}">
+                <td class="td">
+                    <span class="{% if session.type.value == 'MERCREDI' %}badge-violet{% elseif session.type.value == 'DIMANCHE' %}badge-amber{% else %}badge-primary{% endif %}">
+                        {{ session.type.label() }}
+                    </span>
+                </td>
+                <td class="td-bold">
+                    {{ session.date|date('d/m/Y') }}
+                    <span class="text-on-surface-variant font-normal ml-1">{{ session.date|date('H:i') }}</span>
+                </td>
+                <td class="td">
+                    {% if session.responsableKeys %}
+                        <span class="font-medium text-on-surface">{{ session.responsableKeys.fullName }}</span>
+                    {% elseif session.type.value != 'DIMANCHE' %}
+                        <span class="text-on-error-container font-medium text-xs flex items-center gap-1">
+                            <span class="material-symbols-outlined text-base text-red-600">warning</span>
+                            Non assigné
+                        </span>
+                    {% else %}
+                        <span class="text-on-surface-variant">—</span>
+                    {% endif %}
+                </td>
+                <td class="td">{{ session.registrations|length }}</td>
+                <td class="px-6 py-4 text-right">
+                    <a href="{{ path('admin_session_edit', {id: session.id}) }}" class="btn-ghost text-xs flex items-center gap-1 justify-end">
+                        <span class="material-symbols-outlined text-base">edit</span>
+                        Modifier
+                    </a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

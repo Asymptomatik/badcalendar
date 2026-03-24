@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+{% block title %}Inscription - BoisguiBad{% endblock %}
+
+{% block body %}
+<div class="min-h-[70vh] flex items-center justify-center">
+    <div class="w-full max-w-lg">
+
+        <div class="text-center mb-8">
+            <div class="inline-flex w-16 h-16 bg-primary text-on-primary rounded-2xl items-center justify-center mb-4 shadow-lg">
+                <span class="material-symbols-outlined text-3xl">sports_tennis</span>
+            </div>
+            <h1 class="text-3xl font-extrabold text-on-surface">Créer un compte</h1>
+            <p class="text-on-surface-variant mt-1.5 text-sm">Rejoignez le club BoisguiBad</p>
+        </div>
+
+        <div class="bg-surface-container-lowest rounded-xl shadow-sm p-8">
+            {{ form_start(form, {'attr': {'class': 'space-y-5'}}) }}
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        {{ form_label(form.firstName, null, {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.firstName, {'attr': {'class': 'form-input', 'placeholder': 'Prénom'}}) }}
+                        {{ form_errors(form.firstName) }}
+                    </div>
+                    <div>
+                        {{ form_label(form.lastName, null, {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.lastName, {'attr': {'class': 'form-input', 'placeholder': 'Nom'}}) }}
+                        {{ form_errors(form.lastName) }}
+                    </div>
+                </div>
+                <div>
+                    {{ form_label(form.email, null, {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.email, {'attr': {'class': 'form-input', 'placeholder': 'vous@exemple.fr'}}) }}
+                    {{ form_errors(form.email) }}
+                </div>
+                <div>
+                    {{ form_label(form.phone, null, {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.phone, {'attr': {'class': 'form-input', 'placeholder': '06 00 00 00 00'}}) }}
+                </div>
+                <div>
+                    {{ form_label(form.plainPassword.first, null, {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.plainPassword.first, {'attr': {'class': 'form-input', 'placeholder': '••••••••'}}) }}
+                </div>
+                <div>
+                    {{ form_label(form.plainPassword.second, null, {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.plainPassword.second, {'attr': {'class': 'form-input', 'placeholder': '••••••••'}}) }}
+                    {{ form_errors(form.plainPassword) }}
+                </div>
+                <button type="submit" class="btn-primary w-full justify-center">
+                    <span class="material-symbols-outlined">person_add</span>
+                    Créer mon compte
+                </button>
+            {{ form_end(form) }}
+        </div>
+
+        <p class="text-center mt-6 text-sm text-on-surface-variant">
+            Déjà inscrit ?
+            <a href="{{ path('security_login') }}" class="text-primary font-semibold hover:underline">Se connecter</a>
+        </p>
+
+    </div>
+</div>
+{% endblock %}

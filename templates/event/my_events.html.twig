@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+{% block title %}Mes événements - BoisguiBad{% endblock %}
+
+{% block body %}
+<div class="flex items-center justify-between mb-8">
+    <div>
+        <h1 class="text-2xl font-bold text-on-surface">Mes inscriptions aux événements</h1>
+        <p class="text-on-surface-variant text-sm mt-1">Retrouvez toutes vos inscriptions</p>
+    </div>
+    <a href="{{ path('event_list') }}" class="btn-secondary">Voir les événements</a>
+</div>
+
+{% if registrations is empty %}
+    <div class="bg-surface-container-lowest rounded-xl shadow-sm p-12 text-center">
+        <span class="material-symbols-outlined text-5xl text-on-surface-variant mb-3 block">emoji_events</span>
+        <p class="text-on-surface-variant font-medium mb-4">Vous n'êtes inscrit à aucun événement.</p>
+        <a href="{{ path('event_list') }}" class="btn-primary inline-flex">Voir les événements</a>
+    </div>
+{% else %}
+    <div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden">
+        <table class="min-w-full">
+            <thead class="bg-surface-container-low">
+                <tr>
+                    <th class="th">Événement</th>
+                    <th class="th">Dates</th>
+                    <th class="th">Catégorie</th>
+                    <th class="th">Statut</th>
+                    <th class="th">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-outline-variant">
+            {% for reg in registrations %}
+                <tr class="hover:bg-surface-container transition-colors">
+                    <td class="td-bold">{{ reg.event.title }}</td>
+                    <td class="td">{{ reg.event.date|date('d/m/Y') }}</td>
+                    <td class="td">
+                        {% if reg.event.category is defined and reg.event.category %}
+                            <span class="badge-secondary">{{ reg.event.category.label() }}</span>
+                        {% else %}
+                            <span class="text-on-surface-variant">—</span>
+                        {% endif %}
+                    </td>
+                    <td class="td">
+                        <span class="{% if reg.status.value == 'INSCRIT' %}badge-secondary{% elseif reg.status.value == 'DESISTE' %}badge-error{% else %}badge-amber{% endif %}">
+                            {{ reg.status.label() }}
+                        </span>
+                    </td>
+                    <td class="td">
+                        <a href="{{ path('event_show', {id: reg.event.id}) }}" class="btn-ghost text-xs">Voir</a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endif %}
+{% endblock %}

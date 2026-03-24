@@ -1,0 +1,163 @@
+{% extends 'base.html.twig' %}
+{% block title %}Administration - BoisguiBad{% endblock %}
+
+{% block body %}
+<div class="mb-8">
+    <h1 class="text-2xl font-bold text-on-surface">Administration</h1>
+    <p class="text-on-surface-variant text-sm mt-1">Vue d'ensemble du club</p>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+
+    <div class="card p-6 bg-error-container text-on-error-container">
+        <div class="flex items-center justify-between mb-5">
+            <div class="flex items-center gap-3">
+                <span class="material-symbols-outlined text-2xl">key</span>
+                <h2 class="font-semibold">Séances sans responsable</h2>
+            </div>
+            {% if sessionsWithoutResponsable|length > 0 %}
+                <span class="badge-error">{{ sessionsWithoutResponsable|length }}</span>
+            {% else %}
+                <span class="badge-secondary">OK</span>
+            {% endif %}
+        </div>
+        {% if sessionsWithoutResponsable is empty %}
+            <p class="text-sm font-medium flex items-center gap-1">
+                <span class="material-symbols-outlined text-base">check</span>
+                Toutes les séances ont un responsable.
+            </p>
+        {% else %}
+            <ul class="space-y-2.5">
+            {% for session in sessionsWithoutResponsable %}
+                <li class="flex items-center justify-between text-sm">
+                    <span>{{ session.type.label() }} — {{ session.date|date('d/m/Y') }}</span>
+                    <a href="{{ path('admin_session_edit', {id: session.id}) }}" class="btn-ghost text-xs">Assigner</a>
+                </li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+
+    <div class="card p-6 bg-tertiary-fixed text-on-primary-fixed">
+        <div class="flex items-center justify-between mb-5">
+            <div class="flex items-center gap-3">
+                <span class="material-symbols-outlined text-2xl">pending</span>
+                <h2 class="font-semibold">Validations en attente</h2>
+            </div>
+            {% if pendingValidations|length > 0 %}
+                <span class="badge-amber">{{ pendingValidations|length }}</span>
+            {% else %}
+                <span class="badge-secondary">OK</span>
+            {% endif %}
+        </div>
+        {% if pendingValidations is empty %}
+            <p class="text-sm font-medium flex items-center gap-1">
+                <span class="material-symbols-outlined text-base">check</span>
+                Aucune validation en attente.
+            </p>
+        {% else %}
+            <ul class="space-y-2.5">
+            {% for reg in pendingValidations %}
+                <li class="flex items-center justify-between text-sm">
+                    <span class="truncate mr-2">{{ reg.user.fullName }} — {{ reg.event.title }}</span>
+                    <form method="post" action="{{ path('admin_event_registration_validate', {id: reg.id}) }}" class="flex-shrink-0">
+                        <input type="hidden" name="_token" value="{{ csrf_token('registration_validate_' ~ reg.id) }}">
+                        <button class="btn-success text-xs">Valider</button>
+                    </form>
+                </li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+
+    <div class="card p-6 bg-surface-container text-on-surface">
+        <div class="flex items-center justify-between mb-5">
+            <div class="flex items-center gap-3">
+                <span class="material-symbols-outlined text-2xl">people</span>
+                <h2 class="font-semibold">Membres sans type</h2>
+            </div>
+            {% if membersWithoutType|length > 0 %}
+                <span class="badge-amber">{{ membersWithoutType|length }}</span>
+            {% else %}
+                <span class="badge-secondary">OK</span>
+            {% endif %}
+        </div>
+        {% if membersWithoutType is empty %}
+            <p class="text-sm font-medium flex items-center gap-1">
+                <span class="material-symbols-outlined text-base">check</span>
+                Tous les membres ont un type.
+            </p>
+        {% else %}
+            <ul class="space-y-2.5">
+            {% for user in membersWithoutType %}
+                <li class="flex items-center justify-between text-sm">
+                    <span>{{ user.fullName }}</span>
+                    <a href="{{ path('admin_member_show', {id: user.id}) }}" class="btn-ghost text-xs">Assigner</a>
+                </li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+
+    <div class="card p-6 bg-primary-fixed text-on-primary-fixed">
+        <div class="flex items-center justify-between mb-5">
+            <div class="flex items-center gap-3">
+                <span class="material-symbols-outlined text-2xl">backpack</span>
+                <h2 class="font-semibold">Objets non rendus</h2>
+            </div>
+            {% if unreturnedLostItems|length > 0 %}
+                <span class="badge-primary">{{ unreturnedLostItems|length }}</span>
+            {% else %}
+                <span class="badge-secondary">OK</span>
+            {% endif %}
+        </div>
+        {% if unreturnedLostItems is empty %}
+            <p class="text-sm font-medium flex items-center gap-1">
+                <span class="material-symbols-outlined text-base">check</span>
+                Aucun objet en attente.
+            </p>
+        {% else %}
+            <ul class="space-y-2.5">
+            {% for item in unreturnedLostItems %}
+                <li class="text-sm">{{ item.description|slice(0, 45) }}{% if item.description|length > 45 %}…{% endif %}</li>
+            {% endfor %}
+            </ul>
+            <a href="{{ path('lost_item_list') }}" class="mt-4 block text-sm font-semibold hover:underline">Gérer les objets →</a>
+        {% endif %}
+    </div>
+
+</div>
+
+<div class="mb-4">
+    <h2 class="text-lg font-semibold text-on-surface">Accès rapides</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <a href="{{ path('admin_member_list') }}" class="card p-5 bg-surface-container-lowest flex items-center gap-4 hover:shadow-md transition-all group">
+        <div class="w-11 h-11 rounded-xl bg-secondary-container flex items-center justify-center">
+            <span class="material-symbols-outlined text-on-secondary-container text-2xl">people</span>
+        </div>
+        <div>
+            <div class="font-semibold text-on-surface">Membres</div>
+            <div class="text-xs text-on-surface-variant">Gérer les comptes</div>
+        </div>
+    </a>
+    <a href="{{ path('admin_session_list') }}" class="card p-5 bg-surface-container-lowest flex items-center gap-4 hover:shadow-md transition-all group">
+        <div class="w-11 h-11 rounded-xl bg-secondary-container flex items-center justify-center">
+            <span class="material-symbols-outlined text-on-secondary-container text-2xl">sports_tennis</span>
+        </div>
+        <div>
+            <div class="font-semibold text-on-surface">Séances</div>
+            <div class="text-xs text-on-surface-variant">Gérer les séances</div>
+        </div>
+    </a>
+    <a href="{{ path('admin_event_list') }}" class="card p-5 bg-surface-container-lowest flex items-center gap-4 hover:shadow-md transition-all group">
+        <div class="w-11 h-11 rounded-xl bg-secondary-container flex items-center justify-center">
+            <span class="material-symbols-outlined text-on-secondary-container text-2xl">event</span>
+        </div>
+        <div>
+            <div class="font-semibold text-on-surface">Événements</div>
+            <div class="text-xs text-on-surface-variant">Gérer les événements</div>
+        </div>
+    </a>
+</div>
+{% endblock %}

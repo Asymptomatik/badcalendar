@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+{% block title %}Séances - BoisguiBad{% endblock %}
+
+{% block body %}
+<div class="flex items-center justify-between mb-8">
+    <div>
+        <h1 class="text-2xl font-bold text-on-surface">Prochaines séances</h1>
+        <p class="text-on-surface-variant text-sm mt-1">Inscrivez-vous aux séances disponibles</p>
+    </div>
+    <a href="{{ path('session_sunday_propose') }}" class="btn-secondary">
+        <span class="material-symbols-outlined text-sm">add</span>
+        Proposer un dimanche
+    </a>
+</div>
+
+<div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden">
+    <table class="min-w-full">
+        <thead class="bg-surface-container-low">
+            <tr>
+                <th class="th">Type</th>
+                <th class="th">Date</th>
+                <th class="th">Lieu</th>
+                <th class="th">Inscrits</th>
+                <th class="th"></th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-outline-variant">
+            {% for session in sessions %}
+            <tr class="hover:bg-surface-container transition-colors">
+                <td class="td">
+                    <span class="{% if session.type.value == 'MERCREDI' %}badge-violet{% elseif session.type.value == 'DIMANCHE' %}badge-amber{% else %}badge-primary{% endif %}">
+                        {{ session.type.label() }}
+                    </span>
+                </td>
+                <td class="td-bold">
+                    {{ session.date|date('d/m/Y') }}
+                    <span class="text-on-surface-variant font-normal ml-1">{{ session.date|date('H:i') }}</span>
+                </td>
+                <td class="td">{{ session.location ?? '—' }}</td>
+                <td class="td">
+                    <span class="font-semibold text-on-surface">{{ session.registrations|length }}</span>
+                    <span class="text-on-surface-variant text-xs ml-0.5">inscrits</span>
+                </td>
+                <td class="px-6 py-4 text-right">
+                    <a href="{{ path('session_show', {id: session.id}) }}" class="btn-ghost text-xs">Détails</a>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="5" class="px-6 py-12 text-center text-on-surface-variant text-sm">Aucune séance à venir.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

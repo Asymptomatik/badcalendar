@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+{% block title %}Objets trouvés - BoisguiBad{% endblock %}
+
+{% block body %}
+<div class="flex items-center justify-between mb-8">
+    <div>
+        <h1 class="text-2xl font-bold text-on-surface">Objets trouvés</h1>
+        <p class="text-on-surface-variant text-sm mt-1">Avez-vous perdu quelque chose au club ?</p>
+    </div>
+    <a href="{{ path('lost_item_new') }}" class="btn-primary">
+        <span class="material-symbols-outlined text-sm">add</span>
+        Déclarer un objet
+    </a>
+</div>
+
+{% if lostItems is empty %}
+    <div class="bg-surface-container-lowest rounded-xl shadow-sm p-12 text-center">
+        <span class="material-symbols-outlined text-5xl text-on-surface-variant mb-3 block">backpack</span>
+        <p class="text-on-surface-variant font-medium">Aucun objet trouvé enregistré.</p>
+    </div>
+{% else %}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+    {% for item in lostItems %}
+        <div class="bg-surface-container-lowest rounded-xl shadow-sm p-5">
+            <div class="flex items-start gap-3 mb-3">
+                <span class="material-symbols-outlined text-on-surface-variant flex-shrink-0">backpack</span>
+                <p class="font-semibold text-on-surface leading-snug">{{ item.description }}</p>
+            </div>
+            <div class="space-y-1 text-xs text-on-surface-variant mb-4">
+                <p>Trouvé le {{ item.foundAt|date('d/m/Y') }}</p>
+                {% if item.location %}
+                <p class="flex items-center gap-1">
+                    <span class="material-symbols-outlined text-xs">location_on</span>
+                    {{ item.location }}
+                </p>
+                {% endif %}
+            </div>
+            <div class="flex items-center justify-between pt-3 border-t border-outline-variant">
+                <span class="{% if item.status.value == 'TROUVE' %}badge-amber{% else %}badge-secondary{% endif %}">
+                    {{ item.status.label() }}
+                </span>
+                <span class="text-xs text-on-surface-variant">par {{ item.declaredBy.fullName }}</span>
+            </div>
+        </div>
+    {% endfor %}
+    </div>
+{% endif %}
+{% endblock %}

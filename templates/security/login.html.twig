@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+{% block title %}Connexion - BoisguiBad{% endblock %}
+
+{% block body %}
+<div class="min-h-[70vh] flex items-center justify-center">
+    <div class="w-full max-w-md">
+
+        <div class="text-center mb-8">
+            <div class="inline-flex w-16 h-16 bg-primary text-on-primary rounded-2xl items-center justify-center mb-4 shadow-lg">
+                <span class="material-symbols-outlined text-3xl">sports_tennis</span>
+            </div>
+            <h1 class="text-3xl font-extrabold text-on-surface">BoisguiBad</h1>
+            <p class="text-on-surface-variant mt-1.5 text-sm">Connectez-vous à votre espace membre</p>
+        </div>
+
+        <div class="bg-surface-container-lowest rounded-xl shadow-sm p-8">
+            {% if error %}
+            <div class="alert-error mb-6">
+                <span class="material-symbols-outlined">close</span>
+                {{ error.messageKey|trans(error.messageData, 'security') }}
+            </div>
+            {% endif %}
+
+            <form method="post" action="{{ path('security_login') }}" class="space-y-5">
+                <div>
+                    <label for="email" class="form-label">Adresse email</label>
+                    <input type="email" id="email" name="email" value="{{ last_username }}"
+                        required autofocus autocomplete="email"
+                        class="form-input" placeholder="vous@exemple.fr">
+                </div>
+                <div>
+                    <label for="password" class="form-label">Mot de passe</label>
+                    <input type="password" id="password" name="password"
+                        required autocomplete="current-password"
+                        class="form-input" placeholder="••••••••">
+                </div>
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                <button type="submit" class="btn-primary w-full justify-center">
+                    <span class="material-symbols-outlined">login</span>
+                    Se connecter
+                </button>
+            </form>
+        </div>
+
+        <p class="text-center mt-6 text-sm text-on-surface-variant">
+            Pas encore de compte ?
+            <a href="{{ path('security_register') }}" class="text-primary font-semibold hover:underline">Créer un compte</a>
+        </p>
+
+    </div>
+</div>
+{% endblock %}

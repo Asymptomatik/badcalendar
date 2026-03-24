@@ -1,0 +1,125 @@
+{% extends 'base.html.twig' %}
+{% block title %}Modifier la séance - Admin{% endblock %}
+
+{% block body %}
+<a href="{{ path('admin_session_list') }}" class="back-link flex items-center gap-1">
+    <span class="material-symbols-outlined text-base">arrow_back</span>
+    Retour aux séances
+</a>
+
+{% set registrationCount = session.registrations|length %}
+{% set isPast = session.date|date('U') < 'now'|date('U') %}
+{% set statusLabel = isPast ? 'Terminée' : (session.responsableKeys ? 'Prête' : 'À compléter') %}
+{% set statusClass = isPast ? 'badge-slate' : (session.responsableKeys ? 'badge-secondary' : 'badge-amber') %}
+
+<div class="mb-6 mt-2">
+    <p class="text-xs font-semibold uppercase tracking-[0.18em] text-on-surface-variant">Admin / Séances / Modification</p>
+    <h1 class="text-2xl font-bold text-on-surface mt-3">Modifier la séance</h1>
+    <p class="text-on-surface-variant text-sm mt-1">{{ session.type.label() }} — {{ session.date|date('d/m/Y à H:i') }}</p>
+</div>
+
+<div class="grid gap-6 xl:grid-cols-[minmax(0,2fr)_20rem]">
+    <div class="bg-surface-container-lowest rounded-xl shadow-sm p-6 lg:p-7">
+        {{ form_start(form, {'attr': {'class': 'space-y-5'}}) }}
+            <div class="grid gap-5 md:grid-cols-2">
+                <div>
+                    {{ form_label(form.type, null, {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.type, {'attr': {'class': 'form-select'}}) }}
+                    {{ form_errors(form.type) }}
+                </div>
+                <div>
+                    {{ form_label(form.date, null, {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.date, {'attr': {'class': 'form-input'}}) }}
+                    {{ form_errors(form.date) }}
+                </div>
+            </div>
+
+            <div class="grid gap-5 md:grid-cols-2">
+                <div>
+                    {{ form_label(form.location, null, {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.location, {'attr': {'class': 'form-input', 'placeholder': 'Ex: Gymnase Jean Moulin'}}) }}
+                    {{ form_errors(form.location) }}
+                </div>
+                <div>
+                    {{ form_label(form.responsableKeys, null, {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.responsableKeys, {'attr': {'class': 'form-select'}}) }}
+                    {{ form_errors(form.responsableKeys) }}
+                </div>
+            </div>
+
+            <div>
+                {{ form_label(form.notes, null, {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.notes, {'attr': {'class': 'form-textarea', 'rows': '5', 'placeholder': 'Consignes d’ouverture, matériel, remarques pour les inscrits…'}}) }}
+                {{ form_errors(form.notes) }}
+            </div>
+
+            <div class="flex flex-wrap gap-3 pt-3">
+                <button type="submit" class="btn-primary">Enregistrer</button>
+                <a href="{{ path('admin_session_list') }}" class="btn-secondary">Annuler</a>
+            </div>
+        {{ form_end(form) }}
+    </div>
+
+    <div class="space-y-4">
+        <div class="card p-5 bg-surface-container-low">
+            <h2 class="text-sm font-semibold text-on-surface mb-3 flex items-center gap-2">
+                <span class="material-symbols-outlined text-base">info</span>
+                État de la séance
+            </h2>
+            <div class="space-y-3 text-sm text-on-surface">
+                <div class="rounded-xl bg-surface-container-lowest p-4">
+                    <p class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant mb-1">Participation</p>
+                    <p class="text-xl font-bold text-on-surface">{{ registrationCount }}</p>
+                    <p class="text-on-surface-variant text-xs mt-1">membre(s) inscrit(s)</p>
+                </div>
+                <div class="rounded-xl bg-surface-container-lowest p-4 flex items-center justify-between gap-3">
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant mb-1">Statut</p>
+                        <p class="font-semibold text-on-surface">{{ statusLabel }}</p>
+                    </div>
+                    <span class="{{ statusClass }}">{{ statusLabel }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card p-5">
+            <h2 class="text-sm font-semibold text-on-surface mb-3 flex items-center gap-2">
+                <span class="material-symbols-outlined text-base">key</span>
+                Responsable actuel
+            </h2>
+            {% if session.responsableKeys %}
+                <div class="rounded-xl bg-surface-container-low p-4 flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-primary-fixed text-on-primary-fixed flex items-center justify-center font-bold text-sm flex-shrink-0">
+                        {{ session.responsableKeys.firstName|slice(0,1)|upper }}{{ session.responsableKeys.lastName|slice(0,1)|upper }}
+                    </div>
+                    <div>
+                        <p class="font-semibold text-on-surface">{{ session.responsableKeys.fullName }}</p>
+                        <p class="text-xs text-on-surface-variant">Responsable des clés assigné</p>
+                    </div>
+                </div>
+            {% else %}
+                <div class="rounded-xl bg-error-container/60 p-4 text-sm text-on-error-container">
+                    Aucun responsable n'est assigné pour le moment.
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="card p-5">
+            <h2 class="text-sm font-semibold text-on-surface mb-3 flex items-center gap-2">
+                <span class="material-symbols-outlined text-base">history</span>
+                Historique
+            </h2>
+            <ul class="space-y-3 text-sm text-on-surface-variant">
+                <li class="rounded-xl bg-surface-container-low p-4">
+                    <p class="font-semibold text-on-surface text-xs uppercase tracking-wider mb-1">Création</p>
+                    <p>{{ session.createdAt|date('d/m/Y à H:i') }}</p>
+                </li>
+                <li class="rounded-xl bg-surface-container-low p-4">
+                    <p class="font-semibold text-on-surface text-xs uppercase tracking-wider mb-1">Dernière mise à jour</p>
+                    <p>{{ session.updatedAt|date('d/m/Y à H:i') }}</p>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

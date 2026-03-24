@@ -1,0 +1,90 @@
+{% extends 'base.html.twig' %}
+{% block title %}{{ user.fullName }} - Admin{% endblock %}
+
+{% block body %}
+<a href="{{ path('admin_member_list') }}" class="back-link flex items-center gap-1">
+    <span class="material-symbols-outlined text-base">arrow_back</span>
+    Retour aux membres
+</a>
+
+<div class="max-w-2xl space-y-6 mt-4">
+
+    <div class="bg-surface-container-lowest rounded-xl shadow-sm p-6">
+        <div class="flex items-center gap-4 mb-6">
+            <div class="w-16 h-16 rounded-full bg-primary text-on-primary text-xl font-bold flex items-center justify-center flex-shrink-0">
+                {{ user.firstName|slice(0,1)|upper }}{{ user.lastName|slice(0,1)|upper }}
+            </div>
+            <div>
+                <h1 class="text-xl font-bold text-on-surface">{{ user.fullName }}</h1>
+                <p class="text-on-surface-variant text-sm">{{ user.email }}</p>
+            </div>
+        </div>
+
+        <dl class="dl-grid">
+            <div class="dl-item">
+                <dt class="dl-label">Téléphone</dt>
+                <dd class="dl-value">{{ user.phone ?? '—' }}</dd>
+            </div>
+            <div class="dl-item">
+                <dt class="dl-label">Niveau</dt>
+                <dd class="dl-value">{{ user.level ?? '—' }}</dd>
+            </div>
+            <div class="dl-item">
+                <dt class="dl-label">Type de membre</dt>
+                <dd class="dl-value">
+                    {% if user.memberType %}
+                        <span class="{% if user.memberType.value == 'LOISIR' %}badge-slate{% else %}badge-violet{% endif %}">
+                            {{ user.memberType.label() }}
+                        </span>
+                    {% else %}
+                        <span class="badge-error">Non assigné</span>
+                    {% endif %}
+                </dd>
+            </div>
+            <div class="dl-item">
+                <dt class="dl-label">Compte vérifié</dt>
+                <dd class="dl-value">
+                    {% if user.isVerified %}
+                        <span class="badge-secondary flex items-center gap-1 w-fit">
+                            <span class="material-symbols-outlined text-xs">check</span>
+                            Vérifié
+                        </span>
+                    {% else %}
+                        <span class="badge-error">Non vérifié</span>
+                    {% endif %}
+                </dd>
+            </div>
+        </dl>
+    </div>
+
+    <div class="bg-surface-container-lowest rounded-xl shadow-sm p-6">
+        <h2 class="font-semibold text-on-surface mb-4 flex items-center gap-2">
+            <span class="material-symbols-outlined text-base">person</span>
+            Assigner le type de membre
+        </h2>
+        <form method="post" action="{{ path('admin_member_set_type', {id: user.id}) }}" class="flex gap-3">
+            <input type="hidden" name="_token" value="{{ csrf_token('member_type_' ~ user.id) }}">
+            <select name="member_type" class="form-select flex-1">
+                <option value="LOISIR" {% if user.memberType and user.memberType.value == 'LOISIR' %}selected{% endif %}>Loisir</option>
+                <option value="COMPETITEUR" {% if user.memberType and user.memberType.value == 'COMPETITEUR' %}selected{% endif %}>Compétiteur</option>
+            </select>
+            <button type="submit" class="btn-primary">Enregistrer</button>
+        </form>
+    </div>
+
+    {% if not user.isVerified %}
+    <div class="bg-surface-container-lowest rounded-xl shadow-sm p-6">
+        <h2 class="font-semibold text-on-surface mb-2 flex items-center gap-2">
+            <span class="material-symbols-outlined text-base">check</span>
+            Valider le compte
+        </h2>
+        <p class="text-on-surface-variant text-sm mb-4">Ce membre n'a pas encore été vérifié.</p>
+        <form method="post" action="{{ path('admin_member_verify', {id: user.id}) }}">
+            <input type="hidden" name="_token" value="{{ csrf_token('member_verify_' ~ user.id) }}">
+            <button type="submit" class="btn-success">Marquer comme vérifié</button>
+        </form>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}
