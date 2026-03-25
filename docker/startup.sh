@@ -6,6 +6,18 @@ PORT="${PORT:-10000}"
 
 echo "Démarrage de l'application sur le port $PORT..."
 
+# Créer le répertoire partagé si nécessaire (APP_SHARE_DIR)
+APP_SHARE_DIR="${APP_SHARE_DIR:-var/share}"
+# Vérifier que le chemin ne contient pas de traversée de répertoire
+case "$APP_SHARE_DIR" in
+    /*|*..*)
+        echo "ERREUR : APP_SHARE_DIR ne doit pas être un chemin absolu ni contenir '..'." >&2
+        exit 1
+        ;;
+esac
+mkdir -p "/var/www/html/${APP_SHARE_DIR}"
+chown -R www-data:www-data "/var/www/html/${APP_SHARE_DIR}"
+
 # Configurer Apache pour écouter sur le port défini par Render
 sed -i "s/Listen 80/Listen $PORT/" /etc/apache2/ports.conf
 sed -i "s/\${PORT}/$PORT/g" /etc/apache2/sites-available/symfony.conf

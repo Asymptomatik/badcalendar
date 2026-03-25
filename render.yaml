@@ -12,6 +12,8 @@ services:
         value: prod
       - key: APP_SECRET
         generateValue: true
+      - key: APP_SHARE_DIR
+        value: var/share
       - key: DATABASE_URL
         # Exemple : mysql://user:password@host:3306/boisguibad?serverVersion=8.0.32&charset=utf8mb4
         sync: false
@@ -22,5 +24,10 @@ services:
         # Remplacer par un vrai DSN SMTP en production, ex : smtp://user:pass@smtp.example.com:587
         value: null://null
       - key: DEFAULT_URI
+        # URL publique de l'application, ex : https://badcalendar.onrender.com
         sync: false
-    healthCheckPath: /
+      - key: TRUSTED_PROXIES
+        # Indispensable derrière le reverse proxy de Render pour détecter correctement HTTPS et l'IP réelle.
+        # REMOTE_ADDR = faire confiance au dernier saut réseau (l'IP du load balancer de Render).
+        value: "REMOTE_ADDR"
+    healthCheckPath: /connexion
