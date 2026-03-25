@@ -22,8 +22,8 @@ RUN { \
     echo 'opcache.validate_timestamps=0'; \
 } > /usr/local/etc/php/conf.d/opcache-prod.ini
 
-# Activer mod_rewrite pour Symfony
-RUN a2enmod rewrite
+# Activer mod_rewrite et mod_headers pour Symfony et les en-têtes de sécurité
+RUN a2enmod rewrite headers
 
 # Installer Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
@@ -69,12 +69,27 @@ RUN { \
     echo '        Require all granted'; \
     echo '        FallbackResource /index.php'; \
     echo '    </Directory>'; \
+    echo '    # En-têtes de sécurité HTTP'; \
+    echo '    Header always set X-Frame-Options "SAMEORIGIN"'; \
+    echo '    Header always set X-Content-Type-Options "nosniff"'; \
+    echo '    Header always set Referrer-Policy "strict-origin-when-cross-origin"'; \
+    echo '    Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"'; \
+    echo '    # HSTS : activer uniquement si HTTPS est garanti (Render le garantit)'; \
+    echo '    # Ajouter includeSubDomains uniquement si TOUS les sous-domaines supportent HTTPS.'; \
+    echo '    Header always set Strict-Transport-Security "max-age=31536000"'; \
     echo '    ErrorLog ${APACHE_LOG_DIR}/error.log'; \
     echo '    CustomLog ${APACHE_LOG_DIR}/access.log combined'; \
     echo '</VirtualHost>'; \
 } > /etc/apache2/sites-available/symfony.conf \
     && a2ensite symfony.conf \
     && a2dissite 000-default.conf
+
+# Masquer la version d'Apache (réduction de la surface d'attaque)
+RUN { \
+    echo 'ServerTokens Prod'; \
+    echo 'ServerSignature Off'; \
+} > /etc/apache2/conf-available/security-hardening.conf \
+    && a2enconf security-hardening
 
 # Script de démarrage
 COPY docker/startup.sh /usr/local/bin/startup.sh

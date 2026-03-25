@@ -13,3 +13,17 @@ when@test:
         test: true
         session:
             storage_factory_id: session.storage.factory.mock_file
+
+when@prod:
+    framework:
+        # Faire confiance au reverse proxy de Render (charge l'IP réelle et le protocole HTTPS).
+        # La variable TRUSTED_PROXIES est obligatoire en production sur Render (définie dans render.yaml).
+        trusted_proxies: '%env(TRUSTED_PROXIES)%'
+        trusted_headers:
+            - 'x-forwarded-for'
+            - 'x-forwarded-proto'
+            - 'x-forwarded-port'
+        session:
+            cookie_secure: auto    # HTTPS uniquement quand disponible
+            cookie_httponly: true  # Inaccessible depuis JavaScript
+            cookie_samesite: lax   # Protection CSRF de base
