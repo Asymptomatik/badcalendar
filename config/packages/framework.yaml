@@ -18,7 +18,7 @@ when@prod:
     framework:
         # Faire confiance au reverse proxy de Render (charge l'IP réelle et le protocole HTTPS).
         # La variable TRUSTED_PROXIES est obligatoire en production sur Render (définie dans render.yaml).
-        trusted_proxies: '%env(default::TRUSTED_PROXIES)%'
+        trusted_proxies: '%env(TRUSTED_PROXIES)%'
         trusted_headers:
             - 'x-forwarded-for'
             - 'x-forwarded-proto'
