@@ -15,8 +15,16 @@ case "$APP_SHARE_DIR" in
         exit 1
         ;;
 esac
-mkdir -p "/var/www/html/${APP_SHARE_DIR}"
-chown -R www-data:www-data "/var/www/html/${APP_SHARE_DIR}"
+SHARE_PATH="/var/www/html/${APP_SHARE_DIR}"
+if [ ! -d "$SHARE_PATH" ]; then
+    # Première création : s'assurer que tout le contenu appartient à www-data
+    mkdir -p "$SHARE_PATH"
+    chown -R www-data:www-data "$SHARE_PATH"
+else
+    # Réutilisation d'un répertoire existant : éviter un chown récursif coûteux
+    mkdir -p "$SHARE_PATH"
+    chown www-data:www-data "$SHARE_PATH"
+fi
 
 # Configurer Apache pour écouter sur le port défini par Render
 sed -i "s/Listen 80/Listen $PORT/" /etc/apache2/ports.conf
