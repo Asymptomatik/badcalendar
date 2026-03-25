@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: badcalendar
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    # Variables d'environnement requises
+    # DATABASE_URL doit pointer vers un serveur MySQL 8.0 externe
+    # (Render propose des bases PostgreSQL nativement ; pour MySQL,
+    #  utilisez PlanetScale, Railway ou un serveur MySQL Render dédié)
+    envVars:
+      - key: APP_ENV
+        value: prod
+      - key: APP_SECRET
+        generateValue: true
+      - key: DATABASE_URL
+        # Exemple : mysql://user:password@host:3306/boisguibad?serverVersion=8.0.32&charset=utf8mb4
+        sync: false
+      - key: MESSENGER_TRANSPORT_DSN
+        value: doctrine://default?auto_setup=0
+      - key: MAILER_DSN
+        # null://null désactive l'envoi d'emails (mode silencieux)
+        # Remplacer par un vrai DSN SMTP en production, ex : smtp://user:pass@smtp.example.com:587
+        value: null://null
+      - key: DEFAULT_URI
+        sync: false
+    healthCheckPath: /
